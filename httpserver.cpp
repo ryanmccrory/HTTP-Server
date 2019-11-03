@@ -1,5 +1,5 @@
 //Ryan McCrory
-//Simple Web Browser
+//Simple Web Server
 //asgn1
 
 #include <cstdlib>
@@ -40,7 +40,7 @@ void get(int32_t cl, char *file_name, uint32_t bytes){
 	char ok_header [55];
 	sprintf(ok_header, "HTTP/1.1 200 OK\r\nContent-Length: %ld\r\n\r\n", length);
 	send(cl, ok_header, strlen(ok_header), 0);
-	//similar code from dog() to read/ write data
+	//read/ write data
 	char *buffer = (char *) malloc(bytes * sizeof(char));
 	int32_t read_bytes = read(local_file, buffer, bytes);
 	while (read_bytes > 0){
@@ -62,7 +62,7 @@ void put(int32_t cl, char *file_name, uint32_t bytes){
 	char ok_header [55];
 	sprintf(ok_header, "HTTP/1.1 201 Created\r\nContent-Length: 0\r\n\r\n");
 	send(cl, ok_header, strlen(ok_header), 0);
-	//write to file same as dog
+	//write to file
 	while (read_bytes > 0){
 		write(new_file, buffer, read_bytes);
 		read_bytes = recv(cl, buffer, bytes, 0);
@@ -137,7 +137,6 @@ int main (int argc, char *argv[]){
 	}
 	//set hostname to first argument
 	hostname = argv[1];
-	//code given by professor miller to open a socket
 	struct addrinfo *addrs, hints = {};
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
@@ -147,7 +146,6 @@ int main (int argc, char *argv[]){
 	setsockopt(main_socket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
 	bind(main_socket, addrs->ai_addr, addrs->ai_addrlen);
 	listen(main_socket, 16);
-	// Your code, starting with accept(), goes here
 	while (true){
 		int32_t cl = accept(main_socket, NULL, NULL);
 		//cl is now another socket that you can call
